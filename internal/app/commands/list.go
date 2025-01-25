@@ -10,8 +10,13 @@ func (c *Commander) List(inputMsg *tgbotapi.Message) {
 	for _, p := range products {
 		output += p.Title + "\n"
 	}
-	msg := tgbotapi.NewMessage(inputMsg.Chat.ID, output)
-	msg.ReplyToMessageID = inputMsg.MessageID
 
-	c.bot.Send(msg)
+	msg := tgbotapi.NewMessage(inputMsg.Chat.ID, output)
+	msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("Next", "next"),
+		),
+	)
+	c.Respond(inputMsg, msg)
+
 }

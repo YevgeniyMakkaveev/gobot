@@ -26,6 +26,11 @@ func (c *Commander) HandleUpdate(update tgbotapi.Update) {
 			log.Printf("recover from panic %v", panicV)
 		}
 	}()
+	if update.CallbackQuery != nil {
+		msg := tgbotapi.NewMessage(update.CallbackQuery.Message.Chat.ID, update.CallbackQuery.Data)
+		c.bot.Send(msg)
+		return
+	}
 	if update.Message != nil { // If we got a message
 
 		switch update.Message.Command() {
@@ -35,14 +40,18 @@ func (c *Commander) HandleUpdate(update tgbotapi.Update) {
 			c.List(update.Message)
 		case "get":
 			c.Get(update.Message)
+		case "delete":
+			c.Delete(update.Message)
+		case "add":
+			c.AddNew(update.Message)
 		default:
 			c.Default(update.Message)
 		}
 
 	}
 }
-func (c *Commander) Respond(inputMsg *tgbotapi.Message, text string) {
-	msg := tgbotapi.NewMessage(inputMsg.Chat.ID, text)
+func (c *Commander) Respond(inputMsg *tgbotapi.Message, msg tgbotapi.MessageConfig) {
+
 	msg.ReplyToMessageID = inputMsg.MessageID
 
 	c.bot.Send(msg)

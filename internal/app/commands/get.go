@@ -11,11 +11,13 @@ func (c *Commander) Get(inputMsg *tgbotapi.Message) {
 
 	answer, err := c.handleParse(inputMsg)
 	if err != nil {
-		c.Respond(inputMsg, "Ошибка \n"+err.Error())
+		msg := tgbotapi.NewMessage(inputMsg.Chat.ID, "Ошибка \n"+err.Error())
+		c.Respond(inputMsg, msg)
 		return
 
 	}
-	c.Respond(inputMsg, answer)
+	msg := tgbotapi.NewMessage(inputMsg.Chat.ID, answer)
+	c.Respond(inputMsg, msg)
 }
 
 func (c *Commander) handleParse(inputMsg *tgbotapi.Message) (string, error) {
